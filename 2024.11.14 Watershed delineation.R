@@ -31,6 +31,8 @@ library(here) # for relative directories
 proj_dir = here::here() # Directs to the project folder (by pointing to the .Rproj file.)
 scratch_dir = file.path(proj_dir, "scratch_work")
 data_dir = file.path(proj_dir, "Data")
+if(!dir.exists(data_dir)){dir.create(data_dir)}
+dem_path =  file.path(data_dir, "CONUS_dem.tif") # where to find the big DEM file
 
 
 # Data Retrieval and Cleaning; Save Local Copy ----------------------------
@@ -39,6 +41,8 @@ data_dir = file.path(proj_dir, "Data")
 # We can download them and pull them in as R objects 
 if(!file.exists(file.path(proj_dir,"project_data.RData"))){
   source(file.path(proj_dir,"01_DataRetrieval_Cleaning_SaveLocal.R")) 
+} else {
+  load(file.path(proj_dir, "project_data.RData")) # Load data layers/tables
 }
 
 # Plot some of our cool new spatial layers!
@@ -50,33 +54,63 @@ plot(us_states$geometry) # pop quiz, what is state super far out on the right? (
 
 # Pick our USGS gauge -----------------------------------------------------
 
-w2_num = "01135300" #sleepers R
+w5_num = "01135300" #sleepers R
 
 # Let's pull some data from the USGS!
 
 # First we will retrieve the lat and long info from USGS
-w2_info = readNWISdata(sites=w2_num, service="site")
+w5_info = readNWISdata(sites=w5_num, service="site")
 
-# Alternatively, let's retrieve ALL the data records the USGS
-# maintains for this site
-w2_records = readNWISdata(sites=w2_num, service="site", seriesCatalogOutput=TRUE)
+w5_spatial = st_as_sf(w5_info,
+                      coords = c("dec_long_va","dec_lat_va"),
+                      crs = st_crs(4326)) #assign WGS84 projection to coordinates
+w5_sp = st_transform(w5_spatial, st_crs(proj_proj)) # transform to the project projection
+
+
+# Calculate Drainage Basin ------------------------------------------------
+
+# Designate a pathname to save your delineated basin info
+basins_path = file.path(data_dir,"basin.shp")
+
+if(!file.exists(basins_path)){
+  basin_info = drainageBasins(DEM=dem_path,
+                              points=w5_sp,
+                              points_name_col = "site_no",
+                              save_path = data_dir)
+  basins = st_as_sf(basin_info$delineated_basins)
+} else {
+  basins = st_read(dsn = data_dir, layer = basins_path, quiet=T)
+}
+ 
+# What does our basin look like?
+plot(basins$geometry) # Pretty blocky! 
+plot(w5_sp$geometry, add=T, pch = 19, cex = 2, col = "darkcyan")
+
+
+
+
+
+
+# Side Quest: Let's look at w5 records ----------------------------------
+
+# Let's retrieve ALL the data records the USGS maintains for this site
+w5_records = readNWISdata(sites=w5_num, service="site", seriesCatalogOutput=TRUE)
 
 # How on earth do we decode this table? 
 # Look at the "parm_cd", or Parameter Code, column. Then, look at a different 
 # giant table for clarification.
 # https://help.waterdata.usgs.gov/codes-and-parameters/parameters
-w2_records$parm_cd
+w5_records$parm_cd
 # when did they start measuring stuff? Looks like the 90s, with some exceptions
-w2_records$begin_date
-w2_records$end_date
+w5_records$begin_date
+w5_records$end_date
 # And many of the records end in the 90s as well! 
+# Perhaps they did an intensive data collection campaign for a short time?
+# But why?
 
-# Or, for a general picture, we can look at the parameter groups.
+# Also, for a general picture, we can look at the parameter groups.
 # https://help.waterdata.usgs.gov/codes-and-parameters/parameter-groups
-unique(w2_records$parm_grp_cd)
-
-
-
+unique(w5_records$parm_grp_cd)
 
 
 

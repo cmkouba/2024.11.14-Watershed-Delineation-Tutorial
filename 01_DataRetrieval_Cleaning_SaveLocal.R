@@ -18,10 +18,6 @@ if(clean_as_go==T){file.remove(file.path(scratch_dir,"gadm41_USA_2_pk.rds"))}
 
 # CONUS DEM layer (topography) ------------------------------------------------------
 
-data_dir = file.path(proj_dir, "Data")
-if(!dir.exists(data_dir)){dir.create(data_dir)}
-dem_path =  file.path(data_dir, "CONUS_dem.tif")
-
 # get a mask for lower 48 states
 conus = us_states[!us_states$NAME_1 %in% c("Alaska", "Hawaii"),]
 conus$area = st_area(conus) #calculate areas for later

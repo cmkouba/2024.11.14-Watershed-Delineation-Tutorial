@@ -50,3 +50,13 @@ rsconnect/
 scratch_work/elevation/USA_elv_msk.tif
 scratch_work/gadm/gadm41_USA_1_pk.rds
 scratch_work/gadm/gadm41_USA_2_pk.rds
+*.shp
+*.cpg
+*.prj
+*.dbf
+*.shx
+Data/FilledDEM.tif
+Data/streams_derived.tif
+Data/D8pointer.tif
+Data/D8fac.tif
+Data/CONUS_dem.tif
