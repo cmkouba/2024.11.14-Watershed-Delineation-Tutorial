@@ -44,8 +44,45 @@ if(!file.exists(file.path(proj_dir,"project_data.RData"))){
 # Plot some of our cool new spatial layers!
 plot(conus$geometry) # the lower 48!
 plot(us_counties$geometry[us_counties$NAME_1=="Connecticut",]) # Hello CT
+plot(us_dem) # topography
+plot(us_states$geometry) # pop quiz, what is state super far out on the right? (answer at the bottom)
+
+
+# Pick our USGS gauge -----------------------------------------------------
+
+w2_num = "01135300" #sleepers R
+
+# Let's pull some data from the USGS!
+
+# First we will retrieve the lat and long info from USGS
+w2_info = readNWISdata(sites=w2_num, service="site")
+
+# Alternatively, let's retrieve ALL the data records the USGS
+# maintains for this site
+w2_records = readNWISdata(sites=w2_num, service="site", seriesCatalogOutput=TRUE)
+
+# How on earth do we decode this table? 
+# Look at the "parm_cd", or Parameter Code, column. Then, look at a different 
+# giant table for clarification.
+# https://help.waterdata.usgs.gov/codes-and-parameters/parameters
+w2_records$parm_cd
+# when did they start measuring stuff? Looks like the 90s, with some exceptions
+w2_records$begin_date
+w2_records$end_date
+# And many of the records end in the 90s as well! 
+
+# Or, for a general picture, we can look at the parameter groups.
+# https://help.waterdata.usgs.gov/codes-and-parameters/parameter-groups
+unique(w2_records$parm_grp_cd)
 
 
 
 
+
+
+
+
+
+# Pop quiz answer: It's the loooong tail of Aleutian islands!
+plot(us_states$geometry[us_states$NAME_1=="Alaska"])
 
