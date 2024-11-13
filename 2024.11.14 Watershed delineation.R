@@ -21,7 +21,7 @@ library(dataRetrieval) # usgs water quality retrieval package
 library(sf) # for vector spatial data
 library(terra) # for raster spatial data
 library(geodata) # for counties layer
-library(maptools) # for labeling points
+# library(maptools) # for labeling points
 library(SAiVE) # for watershed delineation
 library(here) # for relative directories
 
@@ -40,3 +40,12 @@ data_dir = file.path(proj_dir, "Data")
 if(!file.exists(file.path(proj_dir,"project_data.RData"))){
   source(file.path(proj_dir,"01_DataRetrieval_Cleaning_SaveLocal.R")) 
 }
+
+# Plot some of our cool new spatial layers!
+plot(conus$geometry) # the lower 48!
+plot(us_counties$geometry[us_counties$NAME_1=="Connecticut",]) # Hello CT
+
+
+
+
+
