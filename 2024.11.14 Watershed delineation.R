@@ -24,3 +24,19 @@ library(geodata) # for counties layer
 library(maptools) # for labeling points
 library(SAiVE) # for watershed delineation
 library(here) # for relative directories
+
+
+# Directories and Files ---------------------------------------------------
+
+proj_dir = here::here() # Directs to the project folder (by pointing to the .Rproj file.)
+scratch_dir = file.path(proj_dir, "scratch_work")
+data_dir = file.path(proj_dir, "Data")
+
+
+# Data Retrieval and Cleaning; Save Local Copy ----------------------------
+
+# We need a local copy of our big spatial data layers.
+# We can download them and pull them in as R objects 
+if(!file.exists(file.path(proj_dir,"project_data.RData"))){
+  source(file.path(proj_dir,"01_DataRetrieval_Cleaning_SaveLocal.R")) 
+}
