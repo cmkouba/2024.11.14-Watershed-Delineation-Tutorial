@@ -35,22 +35,22 @@ if(!dir.exists(data_dir)){dir.create(data_dir)}
 dem_path =  file.path(data_dir, "CONUS_dem.tif") # where to find the big DEM file
 
 
-# Data Retrieval and Cleaning; Save Local Copy ----------------------------
+# Spatial Data ----------------------------
 
 # We need a local copy of our big spatial data layers.
 # We can download them and pull them in as R objects 
-if(!file.exists(file.path(proj_dir,"project_data.RData"))){
+if(!file.exists(file.path(proj_dir,"project_data.RData")) |
+   !file.exists(dem_path)){
   source(file.path(proj_dir,"01_DataRetrieval_Cleaning_SaveLocal.R")) 
 } else {
   load(file.path(proj_dir, "project_data.RData")) # Load data layers/tables
-  us_dem = rast(dem_path) # read in the raster data, since it doesn't like loading from an .RData file
 }
+us_dem = rast(dem_path) # read in the raster data, since it doesn't like loading from an .RData file
+
 
 # Plot some of our cool new spatial layers!
-plot(conus$geometry) # the lower 48!
 plot(us_counties$geometry[us_counties$NAME_1=="Connecticut",]) # Hello CT
 plot(us_dem) # topography
-plot(us_states$geometry) # Pop Quiz, what is the state super far out on the right? (answer at the bottom)
 
 
 # Look at our USGS gauge -----------------------------------------------------
@@ -118,8 +118,11 @@ unique(w5_records$parm_grp_cd)
 
 
 
+# Geography side quest: Maps of the US
 
-
-# Pop quiz answer: It's the loooong tail of Aleutian islands!
-plot(us_states$geometry[us_states$NAME_1=="Alaska"])
+# plot(conus$geometry) # the lower 48!
+# plot(us_states$geometry) # Pop Quiz, what is the state super far out on the right? (answer at the bottom)
+# 
+# # Pop quiz answer: It's the loooong tail of Aleutian islands!
+# plot(us_states$geometry[us_states$NAME_1=="Alaska"])
 
