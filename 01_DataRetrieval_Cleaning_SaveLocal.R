@@ -1,7 +1,6 @@
 # Script 01. Data Retrieval and Cleaning; Save Local Copy
 
-clean_as_go = F # if F, keep the datasets on local drive (for development)
-# proj_proj = 4269 # project projection for spatial layers. match HUC projection
+clean_as_go = T # if F, keep the datasets on local drive (for development)
 
 # US state boundaries --------------------------------------------
 us_states = gadm(country = "USA", level = 1, path = scratch_dir)
@@ -27,7 +26,6 @@ if(!file.exists(dem_path)){
   us_dem = geodata::elevation_30s("USA",
                                       path = scratch_dir)
   us_dem = mask(us_dem, conus)
-  # us_dem = project(us_dem, paste0("epsg:",proj_proj))
   writeRaster(us_dem, dem_path)
   
 }
